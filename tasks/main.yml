@@ -1,0 +1,7 @@
+---
+# tasks file for reverse_proxy_mysql_exporter
+
+- name: Debian mysql installation
+  import_tasks: reverse_proxy_debian.yml
+  when: ansible_distribution == "Debian"
+

@@ -1,0 +1,40 @@
+---
+
+  - name: Prerequisites installation
+    apt:
+      pkg:
+        - nginx
+        - python-passlib
+      state: present
+      update_cache: yes
+
+  - name: Remove nginx default vhost config
+    file:
+      path: /etc/nginx/sites-enabled/default
+      state: absent
+
+  - name: Copy nginx reverse proxy config
+    copy:
+      src: files/mysqld_exporter
+      dest: /etc/nginx/sites-enabled/mysqld_exporter
+      mode: '0644'
+      owner: root
+      group: root
+
+  - name: Create nginx basic auth file
+    htpasswd:
+      path: /etc/nginx/htpasswd
+      name: "{{ basic_auth_name }}"
+      password: "{{ basic_auth_password }}"
+      owner: root
+      group: www-data
+      mode: '0640'
+      state: present
+
+  - name: Reload nginx
+    systemd:
+      name: nginx
+      state: reloaded
+      enabled: yes
+
+
